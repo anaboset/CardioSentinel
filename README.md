@@ -301,9 +301,9 @@ This project contributes to:
 
 | Module | Description |
 |--------|-------------|
-| [Guideline RAG Engine](https://github.com/YOURNAME/cardio-rag-cdss) | Evidence retrieval system |
-| [Multi-Agent Clinical System](https://github.com/YOURNAME/cvd-multi-agent-system) | Care reasoning & coordination |
-| [Production System](https://github.com/YOURNAME/cvd-ai-production) | Deployment infrastructure |
+| [Guideline RAG Engine](https://github.com/anaboset/cardio-rag-cdss) | Evidence retrieval system |
+| [Multi-Agent Clinical System](https://github.com/anaboset/cvd-multi-agent-system) | Care reasoning & coordination |
+| [Production System](https://github.com/anaboset/cvd-ai-production) | Deployment infrastructure |
 
 ---
 
