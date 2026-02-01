@@ -74,9 +74,9 @@ The core implementations live in separate modules:
 
 | Component                          | Purpose                                                     |
 | ---------------------------------- | ----------------------------------------------------------- |
-| **1. Guideline RAG System**        | Solves *guideline overload* and *lack of awareness*         |
-| **2. Multi-Agent Clinical System** | Solves *time pressure* and *patient compliance*             |
-| **3. Production System**           | Makes the whole system usable in real clinical environments |
+| **1. [Guideline RAG System](https://github.com/anaboset/cardio-rag-cdss)**        | Solves *guideline overload* and *lack of awareness*         |
+| **2. [Multi-Agent Clinical System](https://github.com/anaboset/cvd-multi-agent-system)** | Solves *time pressure* and *patient compliance*             |
+| **3. [Production System](https://github.com/anaboset/cvd-ai-production)**           | Makes the whole system usable in real clinical environments |
 
 ---
 
