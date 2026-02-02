@@ -48,7 +48,7 @@ This project builds a **3-layered AI ecosystem**:
 
 ```
                    ┌─────────────────────────┐
-                   │   Guideline RAG Engine   |
+                   │   Guideline RAG Engine  |
                    │    Evidence Retrieval   │
                    └────────────┬────────────┘
                                 │
