@@ -1,0 +1,32 @@
+# Core LLM & Orchestration
+groq>=0.4.0
+langgraph>=0.1.0
+langsmith>=0.1.0
+
+# API & MCP
+fastapi>=0.110.0
+uvicorn[standard]>=0.27.0
+httpx>=0.27.0
+fastmcp>=0.1.0
+
+# Vector Database & Embeddings
+chromadb>=0.5.0
+sentence-transformers>=2.7.0
+
+# Production Guardrails & Security
+guardrails-ai>=0.5.0
+giskard-checks>=1.0.2b4
+deepeval>=1.0.0
+
+# Caching
+redis>=5.0.0
+
+# UI (optional Streamlit)
+streamlit>=1.28.0
+
+# Data & Schema
+pydantic>=2.0.0
+python-dotenv>=1.0.0
+
+# Utilities
+python-dateutil>=2.8.0

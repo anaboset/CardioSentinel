@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CardioSentinel MAS</title>
+  <style>
+    :root {
+      --primary: #E63946;
+      --secondary: #457B9D;
+      --success: #2A9D8F;
+      --warning: #F4A261;
+      --bg: #1A1A2E;
+      --surface: #16213E;
+      --text: #F1FAEE;
+      --muted: #A8B2C1;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    header {
+      background: linear-gradient(135deg, var(--primary), #C1121F);
+      padding: 1.5rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    header h1 { font-size: 1.5rem; }
+    header p { color: rgba(255,255,255,0.85); font-size: 0.9rem; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+    .card {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .card h2 {
+      font-size: 1.1rem;
+      color: var(--secondary);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    label { display: block; margin-bottom: 0.3rem; color: var(--muted); font-size: 0.85rem; }
+    input, select, textarea {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      margin-bottom: 1rem;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 8px;
+      background: rgba(0,0,0,0.3);
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+    input:focus, textarea:focus { outline: 2px solid var(--secondary); border-color: transparent; }
+    .conditions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .conditions-grid label {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem;
+      background: rgba(0,0,0,0.2);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      color: var(--text);
+    }
+    .conditions-grid input { width: auto; margin: 0; }
+    button {
+      width: 100%;
+      padding: 0.85rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    button:hover { opacity: 0.9; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .results { margin-top: 2rem; }
+    .section { margin-bottom: 1.5rem; }
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .badge-low { background: var(--success); color: white; }
+    .badge-moderate { background: var(--warning); color: #1A1A2E; }
+    .badge-high { background: var(--primary); color: white; }
+    .badge-very-high { background: #8B0000; color: white; }
+    .rec-list, .factor-list { list-style: none; padding: 0; }
+    .rec-list li, .factor-list li {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .warning-box {
+      background: rgba(230,57,70,0.15);
+      border: 1px solid var(--primary);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-top: 0.5rem;
+    }
+    .disclaimer {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: rgba(69,123,157,0.15);
+      border-radius: 8px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .spinner {
+      display: inline-block;
+      width: 20px; height: 20px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 0.5rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .hidden { display: none; }
+    .source-tag {
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+    .audit-entry {
+      font-size: 0.8rem;
+      color: var(--muted);
+      padding: 0.3rem 0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <span style="font-size:2rem">🫀</span>
+    <div>
+      <h1>CardioSentinel MAS</h1>
+      <p>Multi-Agent Clinical Decision Support for Cardiovascular Care</p>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="grid">
+      <div class="card">
+        <h2>📋 Patient Information</h2>
+        <form id="analysisForm">
+          <label>Age</label>
+          <input type="number" id="age" value="65" min="18" max="120" required>
+
+          <label>Sex</label>
+          <select id="sex">
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+
+          <label>Blood Pressure (SBP/DBP)</label>
+          <input type="text" id="bp" value="150/95" pattern="\d{2,3}/\d{2,3}" required>
+
+          <label>LDL Cholesterol (mg/dL)</label>
+          <input type="number" id="ldl" value="160" min="0" max="500" required>
+
+          <label>Conditions</label>
+          <div class="conditions-grid" id="conditionsGrid"></div>
+
+          <label>Current Medications (comma-separated)</label>
+          <input type="text" id="medications" placeholder="e.g. lisinopril, atorvastatin">
+
+          <label>Clinical Question</label>
+          <textarea id="query" rows="3" required>What is the first-line therapy for this patient?</textarea>
+
+          <button type="submit" id="submitBtn">Run Analysis</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>📊 Results</h2>
+        <div id="loading" class="hidden">
+          <span class="spinner"></span> Running multi-agent analysis...
+        </div>
+        <div id="errorBox" class="warning-box hidden"></div>
+        <div id="results" class="results hidden"></div>
+        <div id="placeholder" style="color:var(--muted);text-align:center;padding:3rem 0;">
+          Enter patient data and click "Run Analysis" to begin.
+        </div>
+      </div>
+    </div>
+
+    <div class="disclaimer">
+      ⚠️ <strong>Research & Demonstration Only.</strong> This system is not intended for clinical use
+      without regulatory approval, clinical validation, and EHR integration. Always consult a
+      qualified healthcare provider for medical decisions.
+    </div>
+  </div>
+
+  <script>
+    const CONDITIONS = [
+      'hypertension', 'dyslipidemia', 'smoking', 'diabetes', 'ckd',
+      'asthma', 'gout', 'pregnancy', 'liver_disease', 'bradycardia'
+    ];
+
+    const grid = document.getElementById('conditionsGrid');
+    CONDITIONS.forEach(c => {
+      const label = document.createElement('label');
+      label.innerHTML = `<input type="checkbox" name="condition" value="${c}"> ${c.replace('_',' ')}`;
+      if (c === 'hypertension') label.querySelector('input').checked = true;
+      grid.appendChild(label);
+    });
+
+    function badgeClass(classification) {
+      const map = { 'Low': 'badge-low', 'Moderate': 'badge-moderate', 'High': 'badge-high', 'Very High': 'badge-very-high' };
+      return map[classification] || 'badge-moderate';
+    }
+
+    document.getElementById('analysisForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submitBtn');
+      const loading = document.getElementById('loading');
+      const results = document.getElementById('results');
+      const errorBox = document.getElementById('errorBox');
+      const placeholder = document.getElementById('placeholder');
+
+      btn.disabled = true;
+      loading.classList.remove('hidden');
+      results.classList.add('hidden');
+      errorBox.classList.add('hidden');
+      placeholder.classList.add('hidden');
+
+      const conditions = [...document.querySelectorAll('input[name="condition"]:checked')].map(c => c.value);
+      const medsRaw = document.getElementById('medications').value;
+      const medications = medsRaw ? medsRaw.split(',').map(m => m.trim()).filter(Boolean) : [];
+
+      const payload = {
+        patient: {
+          age: parseInt(document.getElementById('age').value),
+          sex: document.getElementById('sex').value,
+          bp: document.getElementById('bp').value,
+          ldl: parseFloat(document.getElementById('ldl').value),
+          conditions,
+          medications,
+        },
+        query: document.getElementById('query').value,
+      };
+
+      try {
+        const resp = await fetch('/api/v1/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const json = await resp.json();
+        if (!resp.ok) throw new Error(json.detail?.message || json.detail || 'Analysis failed');
+        renderResults(json.data);
+        results.classList.remove('hidden');
+      } catch (err) {
+        errorBox.textContent = err.message;
+        errorBox.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        loading.classList.add('hidden');
+      }
+    });
+
+    function renderResults(data) {
+      const risk = data.risk || {};
+      const guidelines = data.guidelines || {};
+      const meds = data.medication_safety || {};
+      const patient = data.patient_communication || {};
+
+      let html = '';
+
+      if (risk.classification) {
+        html += `<div class="section">
+          <h2>⚠️ Risk Stratification</h2>
+          <span class="badge ${badgeClass(risk.classification)}">${risk.classification}</span>
+          <span style="margin-left:0.5rem">ASCVD 10-year risk: ${risk.score}%</span>
+          <ul class="factor-list">${(risk.factors||[]).map(f=>`<li>• ${f}</li>`).join('')}</ul>
+        </div>`;
+      }
+
+      if (guidelines.recommendations?.length) {
+        html += `<div class="section">
+          <h2>📚 Clinical Guidelines</h2>
+          <p style="font-size:0.85rem;color:var(--muted)">Confidence: ${guidelines.confidence}</p>
+          <ul class="rec-list">${guidelines.recommendations.map(r=>`<li>${r}</li>`).join('')}</ul>
+          ${(guidelines.evidence_sources||[]).map(s=>`<p class="source-tag">[${s}]</p>`).join('')}
+        </div>`;
+      }
+
+      if (meds) {
+        const safe = meds.safe_to_proceed;
+        html += `<div class="section">
+          <h2>💊 Medication Safety</h2>
+          <span class="badge ${safe ? 'badge-low' : 'badge-very-high'}">${safe ? 'SAFE' : 'CONCERNS FOUND'}</span>
+          ${(meds.interactions||[]).map(i=>`<div class="warning-box" style="margin-top:0.5rem">⚡ ${i}</div>`).join('')}
+          ${(meds.contraindications||[]).map(c=>`<div class="warning-box" style="margin-top:0.5rem">🚫 ${c}</div>`).join('')}
+        </div>`;
+      }
+
+      if (patient.summary) {
+        html += `<div class="section">
+          <h2>🤝 Patient Communication</h2>
+          <p style="line-height:1.6">${patient.summary}</p>
+          <ul class="rec-list">${(patient.lifestyle_advice||[]).map(a=>`<li>→ ${a}</li>`).join('')}</ul>
+        </div>`;
+      }
+
+      if (data.audit_trail?.length) {
+        html += `<div class="section">
+          <h2>📋 Audit Trail</h2>
+          ${data.audit_trail.slice(0,6).map(e=>`<div class="audit-entry">[${e.agent}] ${e.action}: ${e.description}</div>`).join('')}
+        </div>`;
+      }
+
+      document.getElementById('results').innerHTML = html;
+    }
+  </script>
+</body>
+</html>
